@@ -2,95 +2,85 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
-*/
+/* AURORA 2.0 - Government-Grade Monitoring System Design Tokens */
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap');
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    /* Core backgrounds - deep charcoal/slate */
+    --background: 220 15% 8%;
+    --foreground: 40 10% 85%;
 
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    /* Card surfaces - slightly elevated */
+    --card: 220 12% 11%;
+    --card-foreground: 40 10% 85%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    /* Popover/dropdown */
+    --popover: 220 12% 13%;
+    --popover-foreground: 40 10% 85%;
 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+    /* Primary - muted forest green */
+    --primary: 150 25% 35%;
+    --primary-foreground: 40 10% 95%;
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    /* Secondary - warm sandstone */
+    --secondary: 35 20% 18%;
+    --secondary-foreground: 40 15% 75%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    /* Muted surfaces */
+    --muted: 220 10% 15%;
+    --muted-foreground: 40 8% 55%;
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    /* Accent - olive earth tone */
+    --accent: 80 25% 25%;
+    --accent-foreground: 40 10% 90%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    /* Destructive - deep rust */
+    --destructive: 10 45% 35%;
+    --destructive-foreground: 40 10% 95%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    /* Borders and inputs */
+    --border: 220 10% 20%;
+    --input: 220 10% 18%;
+    --ring: 150 25% 40%;
 
-    --radius: 0.5rem;
+    --radius: 0.25rem;
 
-    --sidebar-background: 0 0% 98%;
+    /* Custom AURORA tokens */
+    --aurora-charcoal: 220 15% 8%;
+    --aurora-slate: 220 12% 14%;
+    --aurora-steel: 220 10% 22%;
+    
+    /* Earth-tone accents */
+    --aurora-forest: 150 25% 35%;
+    --aurora-olive: 80 30% 35%;
+    --aurora-burnt-orange: 25 55% 42%;
+    --aurora-rust: 15 50% 32%;
+    --aurora-sandstone: 35 25% 55%;
+    --aurora-warm-gray: 30 12% 45%;
+    
+    /* Functional colors */
+    --legal-boundary: 140 22% 38%;
+    --no-go-zone: 10 45% 35%;
+    --excavation-area: 40 18% 58%;
+    --status-active: 150 30% 40%;
+    --status-warning: 25 60% 45%;
+    --status-alert: 10 50% 40%;
 
-    --sidebar-foreground: 240 5.3% 26.1%;
+    /* Gradients */
+    --gradient-earth: linear-gradient(135deg, hsl(150 25% 30%) 0%, hsl(80 25% 32%) 100%);
+    --gradient-terrain: linear-gradient(180deg, hsl(25 40% 35%) 0%, hsl(15 45% 28%) 100%);
+    --gradient-panel: linear-gradient(180deg, hsl(220 12% 12%) 0%, hsl(220 15% 9%) 100%);
 
-    --sidebar-primary: 240 5.9% 10%;
-
-    --sidebar-primary-foreground: 0 0% 98%;
-
-    --sidebar-accent: 240 4.8% 95.9%;
-
-    --sidebar-accent-foreground: 240 5.9% 10%;
-
-    --sidebar-border: 220 13% 91%;
-
-    --sidebar-ring: 217.2 91.2% 59.8%;
-  }
-
-  .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
-
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    /* Sidebar */
+    --sidebar-background: 220 12% 10%;
+    --sidebar-foreground: 40 10% 75%;
+    --sidebar-primary: 150 25% 35%;
+    --sidebar-primary-foreground: 40 10% 95%;
+    --sidebar-accent: 220 10% 16%;
+    --sidebar-accent-foreground: 40 10% 80%;
+    --sidebar-border: 220 10% 18%;
+    --sidebar-ring: 150 25% 40%;
   }
 }
 
@@ -100,6 +90,96 @@ All colors MUST be HSL.
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground antialiased;
+    font-family: 'IBM Plex Sans', system-ui, sans-serif;
+  }
+
+  /* Monospace for data values */
+  .font-mono {
+    font-family: 'IBM Plex Mono', monospace;
+  }
+
+  /* Scrollbar styling for control panels */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: hsl(var(--muted));
+    border-radius: 3px;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: hsl(var(--border));
+    border-radius: 3px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--aurora-warm-gray));
+  }
+}
+
+@layer components {
+  /* Data panel styling */
+  .data-panel {
+    @apply bg-card border border-border rounded-sm;
+    background: var(--gradient-panel);
+  }
+
+  /* Status indicator */
+  .status-dot {
+    @apply w-2 h-2 rounded-full;
+    animation: pulse-subtle 3s ease-in-out infinite;
+  }
+
+  .status-dot-active {
+    background-color: hsl(var(--status-active));
+    box-shadow: 0 0 8px hsl(var(--status-active) / 0.5);
+  }
+
+  /* Control label styling */
+  .control-label {
+    @apply text-xs font-medium uppercase tracking-wider text-muted-foreground;
+  }
+
+  /* Data value styling */
+  .data-value {
+    @apply font-mono text-sm text-foreground;
+  }
+
+  /* Alert row styling */
+  .alert-row {
+    @apply border-l-2 pl-3 py-2 border-border;
+  }
+
+  .alert-row-warning {
+    border-left-color: hsl(var(--status-warning));
+  }
+
+  .alert-row-critical {
+    border-left-color: hsl(var(--no-go-zone));
+  }
+}
+
+@layer utilities {
+  @keyframes pulse-subtle {
+    0%, 100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.6;
+    }
+  }
+
+  /* Map overlay styling */
+  .map-overlay {
+    background: linear-gradient(
+      to bottom,
+      hsl(var(--background) / 0.1) 0%,
+      transparent 20%,
+      transparent 80%,
+      hsl(var(--background) / 0.2) 100%
+    );
   }
 }
