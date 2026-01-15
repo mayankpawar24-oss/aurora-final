@@ -1,73 +1,126 @@
-# Welcome to your Lovable project
+AURORA 2.0 – Adaptive Mining Activity Monitoring
 
-## Project info
+Beyond the Horizon
 
-**URL**: https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID
+An end-to-end geospatial analytics system for adaptive monitoring of mining activities using Sentinel-2 time-series data, designed to detect excavation trends and no-go zone violations with temporal consistency and explainability.
 
-## How can I edit this code?
+ Overview
 
-There are several ways of editing your application.
+Regulatory agencies require continuous, reliable monitoring of mining operations to ensure compliance with legal boundaries and protection of restricted zones.
 
-**Use Lovable**
+AURORA 2.0 addresses this challenge by providing:
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and start prompting.
+Automated excavation activity detection
 
-Changes made via Lovable will be committed automatically to this repo.
+Temporal profiling of mining expansion
 
-**Use your preferred IDE**
+No-go zone violation alerts
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+Interactive visual analytics dashboard
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+The system is data-adaptive, mine-agnostic, and designed for real-world deployment scenarios.
 
-Follow these steps:
+Key Capabilities
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+Adaptive Signature Learning
+Learns excavation patterns dynamically from multispectral time-series data without hard-coded thresholds.
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+Temporal Excavation Analytics
+Tracks excavation growth trends and rates over time while suppressing seasonal noise.
 
-# Step 3: Install the necessary dependencies.
-npm i
+No-Go Zone Violation Detection
+Detects and quantifies illegal mining activity inside restricted zones with temporal alerts.
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
+Interactive Dashboard
+Visualizes spatial changes, timelines, and system insights through an intuitive interface.
+
+🏗️ System Architecture
+Frontend (React + Vite)
+│
+│── Interactive Dashboard
+│   ├── Map Visualization
+│   ├── Temporal Charts
+│   ├── System Insights
+│
+Backend (FastAPI)
+│
+│── Adaptive Monitoring API
+│   ├── Excavation Analytics
+│   ├── Temporal Aggregation
+│   └── Violation Detection Logic
+
+ Tech Stack
+Frontend
+
+React + TypeScript
+
+Vite
+
+Tailwind CSS
+
+shadcn-ui
+
+Backend
+
+Python
+
+FastAPI
+
+Uvicorn
+
+▶️ How to Run the Project Locally
+1️⃣ Clone the Repository
+git clone https://github.com/mayankpawar24-oss/aurora-insights.git
+cd aurora-insights
+
+2️⃣ Run the Backend
+cd backend
+pip install fastapi uvicorn
+uvicorn main:app --reload --port 8000
+
+
+Backend will be available at:
+👉 http://127.0.0.1:8000
+👉 API Docs: http://127.0.0.1:8000/docs
+
+3️⃣ Run the Frontend
+
+Open a new terminal window:
+
+cd frontend
+npm install
 npm run dev
-```
 
-**Edit a file directly in GitHub**
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+Frontend will be available at:
+👉 http://localhost:5173
 
-**Use GitHub Codespaces**
+📊 Dashboard Walkthrough
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+Select Mine & Date Range
 
-## What technologies are used for this project?
+Start Monitoring
 
-This project is built with:
+View:
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+Excavated area trends
 
-## How can I deploy this project?
+No-go zone violations
 
-Simply open [Lovable](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and click on Share -> Publish.
+Temporal excavation growth
 
-## Can I connect a custom domain to my Lovable project?
+Expand Detailed Analysis for supporting charts and breakdowns
 
-Yes, you can!
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+
+
+
+
+📌 Notes for Evaluators
+
+The system demonstrates end-to-end integration (data → analytics → visualization).
+
+Analytics are structured to be mine-agnostic and deployment-ready.
+
+The dashboard emphasizes clarity, trust, and interpretability.
