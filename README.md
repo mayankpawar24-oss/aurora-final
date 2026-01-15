@@ -1,4 +1,4 @@
-🌌 AURORA 2.0 – Adaptive Mining Activity Monitoring
+<img width="775" height="413" alt="image" src="https://github.com/user-attachments/assets/c5ce2afd-d114-4e87-9060-400bc933a85f" />🌌 AURORA 2.0 – Adaptive Mining Activity Monitoring
 
 Beyond the Horizon
 
