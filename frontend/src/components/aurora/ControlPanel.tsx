@@ -1,7 +1,10 @@
+import { useState } from "react";
 import { MapPin, Calendar, Layers, Play, Shield, AlertTriangle, Mountain } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
+import { monitoringAPI } from "@/lib/api";
+import { useToast } from "@/hooks/use-toast";
 import {
   Select,
   SelectContent,
@@ -10,7 +13,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-const mines = [
+const defaultMines = [
   { id: "m1", name: "Jharia Coal Fields", region: "Jharkhand" },
   { id: "m2", name: "Singrauli Complex", region: "Madhya Pradesh" },
   { id: "m3", name: "Talcher Coalfield", region: "Odisha" },
@@ -28,6 +31,9 @@ interface ControlPanelProps {
   setShowNoGoZones: (value: boolean) => void;
   showExcavation: boolean;
   setShowExcavation: (value: boolean) => void;
+  mines?: any[];
+  onAnalysisComplete?: (data: any) => void;
+  onMonitoringStart?: () => void;
 }
 
 const ControlPanel = ({
@@ -41,7 +47,48 @@ const ControlPanel = ({
   setShowNoGoZones,
   showExcavation,
   setShowExcavation,
+  mines = defaultMines,
+  onAnalysisComplete,
+  onMonitoringStart,
 }: ControlPanelProps) => {
+  const { toast } = useToast();
+  const [actualAnalysisRange, setActualAnalysisRange] = useState<{start: string, end: string} | null>(null);
+
+  // Calculate dates from slider values (0-100 mapped to Mar 2023 - Nov 2023)
+  const startDate = new Date(2023, 2, 1 + Math.floor((dateRange?.[0] || 25) * 0.08)); // Mar 1 + days
+  const endDate = new Date(2023, 2, 1 + Math.floor((dateRange?.[1] || 85) * 0.08)); // Mar 1 + days
+  
+  const formatDate = (date: Date) => {
+    return date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+  };
+
+  const handleStartMonitoring = async () => {
+    try {
+      onMonitoringStart?.();
+      const startDateStr = startDate.toISOString().slice(0, 7); // YYYY-MM
+      const endDateStr = endDate.toISOString().slice(0, 7); // YYYY-MM
+      
+      // Store the requested range
+      const requestedRange = { start: startDateStr, end: endDateStr };
+      
+      const data = await monitoringAPI.startMonitoring(selectedMine, startDateStr, endDateStr);
+      onAnalysisComplete?.(data);
+      
+      // Update actual range (backend may have expanded it)
+      setActualAnalysisRange(requestedRange);
+      
+      toast({
+        title: "Success",
+        description: "Monitoring started successfully",
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to start monitoring",
+        variant: "destructive",
+      });
+    }
+  };
   return (
     <aside className="w-72 border-r border-border bg-gradient-to-b from-sidebar to-background flex flex-col">
       {/* Mine Selection */}
@@ -57,11 +104,11 @@ const ControlPanel = ({
             <SelectValue placeholder="Select mine" />
           </SelectTrigger>
           <SelectContent className="bg-popover border-border">
-            {mines.map((mine) => (
-              <SelectItem key={mine.id} value={mine.id}>
+            {(mines || []).map((mine) => (
+              <SelectItem key={mine?.id || 'unknown'} value={mine?.id || 'unknown'}>
                 <div className="flex flex-col items-start py-1">
-                  <span className="text-sm font-medium">{mine.name}</span>
-                  <span className="text-[10px] text-muted-foreground">{mine.region}</span>
+                  <span className="text-sm font-medium">{mine?.name || 'Unknown Mine'}</span>
+                  <span className="text-[10px] text-muted-foreground">{mine?.region || 'Unknown Region'}</span>
                 </div>
               </SelectItem>
             ))}
@@ -88,13 +135,18 @@ const ControlPanel = ({
           />
           <div className="flex justify-between items-center">
             <div className="px-2.5 py-1.5 bg-muted rounded-md">
-              <span className="text-xs font-mono text-foreground">Mar 2023</span>
+              <span className="text-xs font-mono text-foreground">{formatDate(startDate)}</span>
             </div>
             <div className="h-px flex-1 mx-3 bg-border" />
             <div className="px-2.5 py-1.5 bg-muted rounded-md">
-              <span className="text-xs font-mono text-foreground">Nov 2023</span>
+              <span className="text-xs font-mono text-foreground">{formatDate(endDate)}</span>
             </div>
           </div>
+          {actualAnalysisRange && actualAnalysisRange.start === actualAnalysisRange.end && (
+            <div className="text-[10px] text-muted-foreground text-center">
+              Range auto-expanded for trend analysis
+            </div>
+          )}
         </div>
       </div>
 
@@ -160,7 +212,10 @@ const ControlPanel = ({
 
       {/* Action Button */}
       <div className="p-5">
-        <Button className="w-full h-12 bg-gradient-to-r from-primary to-aurora-olive hover:from-primary/90 hover:to-aurora-olive/90 text-primary-foreground font-semibold shadow-lg shadow-primary/20">
+        <Button 
+          onClick={handleStartMonitoring}
+          className="w-full h-12 bg-gradient-to-r from-primary to-aurora-olive hover:from-primary/90 hover:to-aurora-olive/90 text-primary-foreground font-semibold shadow-lg shadow-primary/20"
+        >
           <Play className="w-4 h-4 mr-2" />
           Start Monitoring
         </Button>

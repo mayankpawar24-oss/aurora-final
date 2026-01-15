@@ -5,13 +5,25 @@ interface MapPanelProps {
   showLegalBoundary?: boolean;
   showNoGoZones?: boolean;
   showExcavation?: boolean;
+  selectedMine?: string;
+  mines?: any[];
+  analysisData?: any;
 }
 
 const MapPanel = ({ 
   showLegalBoundary = true, 
   showNoGoZones = true, 
-  showExcavation = true 
+  showExcavation = true,
+  selectedMine = "m1",
+  mines = [],
+  analysisData
 }: MapPanelProps) => {
+  // Find the selected mine's coordinates
+  const selectedMineData = mines.find(mine => mine.id === selectedMine);
+  const lat = selectedMineData?.lat || 23.8081;
+  const lng = selectedMineData?.lng || 84.8385;
+  const mineName = selectedMineData?.name || "Jharia Coal Fields";
+  const region = selectedMineData?.region || "Jharkhand";
   return (
     <div className="w-full h-full relative bg-aurora-charcoal overflow-hidden">
       {/* Satellite-style terrain background */}
@@ -63,8 +75,38 @@ const MapPanel = ({
           </filter>
         </defs>
 
-        {/* Legal boundary */}
-        {showLegalBoundary && (
+        {/* Dynamic Legal boundary from analysisData */}
+        {showLegalBoundary && analysisData?.map_layers?.legal_boundary && analysisData.map_layers.legal_boundary.geometry?.coordinates && (
+          <polygon
+            points={(() => {
+              try {
+                const coords = analysisData.map_layers.legal_boundary.geometry.coordinates[0];
+                if (!Array.isArray(coords)) return '';
+                return coords
+                  .map((coord: any) => {
+                    if (Array.isArray(coord) && coord.length >= 2 && typeof coord[0] === 'number' && typeof coord[1] === 'number') {
+                      return `${coord[0]},${coord[1]}`;
+                    }
+                    return '';
+                  })
+                  .filter(Boolean)
+                  .join(' ');
+              } catch (error) {
+                console.warn('Error processing legal boundary coordinates:', error);
+                return '';
+              }
+            })()}
+            fill="none"
+            stroke="hsl(var(--legal-boundary))"
+            strokeWidth="0.4"
+            strokeDasharray="3,1.5"
+            opacity="0.85"
+            filter="url(#glow)"
+          />
+        )}
+
+        {/* Fallback static legal boundary if no analysisData */}
+        {showLegalBoundary && !analysisData?.map_layers?.legal_boundary && (
           <polygon
             points="20,15 78,18 85,65 75,88 28,85 15,48"
             fill="none"
@@ -76,8 +118,48 @@ const MapPanel = ({
           />
         )}
         
-        {/* No-go zones */}
-        {showNoGoZones && (
+        {/* Dynamic No-go zones from analysisData */}
+        {showNoGoZones && analysisData?.map_layers?.no_go_zone && analysisData.map_layers.no_go_zone.features && (
+          <>
+            {analysisData.map_layers.no_go_zone.features
+              .filter((feature: any) => feature?.geometry?.coordinates?.[0])
+              .map((feature: any, index: number) => {
+                try {
+                  const coords = feature.geometry.coordinates[0];
+                  if (!Array.isArray(coords)) return null;
+                  const points = coords
+                    .map((coord: any) => {
+                      if (Array.isArray(coord) && coord.length >= 2 && typeof coord[0] === 'number' && typeof coord[1] === 'number') {
+                        return `${coord[0]},${coord[1]}`;
+                      }
+                      return '';
+                    })
+                    .filter(Boolean)
+                    .join(' ');
+                  
+                  if (!points) return null;
+                  
+                  return (
+                    <polygon
+                      key={index}
+                      points={points}
+                      fill="hsl(var(--no-go-zone))"
+                      fillOpacity="0.15"
+                      stroke="hsl(var(--no-go-zone))"
+                      strokeWidth="0.35"
+                      opacity="0.9"
+                    />
+                  );
+                } catch (error) {
+                  console.warn('Error processing no-go zone coordinates:', error);
+                  return null;
+                }
+              })}
+          </>
+        )}
+
+        {/* Fallback static no-go zones if no analysisData */}
+        {showNoGoZones && !analysisData?.map_layers?.no_go_zone && (
           <>
             <polygon
               points="52,30 72,35 70,52 50,48"
@@ -98,8 +180,40 @@ const MapPanel = ({
           </>
         )}
         
-        {/* Excavation areas */}
-        {showExcavation && (
+        {/* Dynamic Excavation areas from analysisData */}
+        {showExcavation && analysisData?.map_layers?.excavation_mask && analysisData.map_layers.excavation_mask.geometry?.coordinates && (() => {
+          try {
+            const coords = analysisData.map_layers.excavation_mask.geometry.coordinates[0];
+            if (!Array.isArray(coords)) return null;
+            const points = coords
+              .map((coord: any) => {
+                if (Array.isArray(coord) && coord.length >= 2 && typeof coord[0] === 'number' && typeof coord[1] === 'number') {
+                  return `${coord[0]},${coord[1]}`;
+                }
+                return '';
+              })
+              .filter(Boolean)
+              .join(' ');
+            
+            if (!points) return null;
+            
+            return (
+              <polygon
+                points={points}
+                fill="hsl(var(--excavation-area))"
+                fillOpacity="0.25"
+                stroke="hsl(var(--excavation-area))"
+                strokeWidth="0.25"
+              />
+            );
+          } catch (error) {
+            console.warn('Error processing excavation coordinates:', error);
+            return null;
+          }
+        })()}
+
+        {/* Fallback static excavation areas if no analysisData */}
+        {showExcavation && !analysisData?.map_layers?.excavation_mask && (
           <>
             <ellipse
               cx="42"
@@ -197,9 +311,9 @@ const MapPanel = ({
       {/* Coordinates */}
       <div className="absolute bottom-4 right-4 px-3 py-2 bg-card/95 backdrop-blur-sm rounded-lg border border-border">
         <p className="text-xs font-mono text-foreground">
-          23.7957°N, 86.4304°E
+          {lat.toFixed(4)}°N, {lng.toFixed(4)}°E
         </p>
-        <p className="text-[10px] text-muted-foreground">Jharia Coal Fields, Jharkhand</p>
+        <p className="text-[10px] text-muted-foreground">{mineName}, {region}</p>
       </div>
 
       {/* Subtle vignette overlay */}

@@ -11,26 +11,48 @@ import {
 } from "recharts";
 import { TrendingUp, TrendingDown } from "lucide-react";
 
-const generateData = () => {
-  const months = [
-    "Jan", "Feb", "Mar", "Apr", "May", "Jun",
-    "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
-  ];
-  
-  return months.map((month, i) => ({
-    month,
-    excavated: Math.round(42 + Math.sin(i * 0.4) * 12 + i * 2.8),
-    noGoZone: Math.round((1.5 + Math.sin(i * 0.7) * 1 + (i > 5 ? (i - 5) * 0.6 : 0)) * 10) / 10,
-  }));
-};
+interface AnalyticsChartProps {
+  selectedMine?: string;
+  dateRange?: number[];
+  analysisData?: any;
+}
 
-const AnalyticsChart = () => {
-  const data = useMemo(() => generateData(), []);
+const AnalyticsChart = ({ selectedMine = "m1", dateRange = [25, 85], analysisData }: AnalyticsChartProps) => {
+  const data = useMemo(() => {
+    if (analysisData?.time_series) {
+      try {
+        const { dates, legal_excavated_area, no_go_excavated_area } = analysisData.time_series;
+        if (!Array.isArray(dates) || !Array.isArray(legal_excavated_area) || !Array.isArray(no_go_excavated_area)) {
+          throw new Error('Invalid time series data structure');
+        }
+        return dates.map((date: string, i: number) => ({
+          month: new Date(date).toLocaleDateString('en-US', { month: 'short' }),
+          excavated: Number(legal_excavated_area[i]) || 0,
+          noGoZone: Number(no_go_excavated_area[i]) || 0,
+        }));
+      } catch (error) {
+        console.warn('Error processing time series data, using fallback:', error);
+        // Fallback to generated data if processing fails
+      }
+    }
+    
+    // Fallback to generated data if no analysis data or processing failed
+    const months = [
+      "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+      "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+    ];
+    
+    return months.map((month, i) => ({
+      month,
+      excavated: Math.round(42 + Math.sin(i * 0.4) * 12 + i * 2.8),
+      noGoZone: Math.round((1.5 + Math.sin(i * 0.7) * 1 + (i > 5 ? (i - 5) * 0.6 : 0)) * 10) / 10,
+    }));
+  }, [analysisData]);
   
-  const latestExcavated = data[data.length - 1].excavated;
-  const previousExcavated = data[data.length - 2].excavated;
-  const trend = latestExcavated > previousExcavated ? "up" : "down";
-  const change = Math.abs(((latestExcavated - previousExcavated) / previousExcavated) * 100).toFixed(1);
+  const latestExcavated = data[data.length - 1]?.excavated || 0;
+  const firstExcavated = data[0]?.excavated || 0;
+  const trend = latestExcavated > firstExcavated ? "up" : "down";
+  const change = firstExcavated !== 0 ? Math.abs(((latestExcavated - firstExcavated) / firstExcavated) * 100).toFixed(1) : "0.0";
 
   const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
