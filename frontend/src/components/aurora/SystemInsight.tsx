@@ -59,38 +59,6 @@ const SystemInsight = ({ mineId = "m1", analysisData, refreshKey = 0, isExpanded
     return { areaBreakdown, temporalData };
   }, [analysisData]);
 
-  // Calculate chart data
-  const chartData = useMemo(() => {
-    if (!analysisData) return { areaBreakdown: [], temporalData: [] };
-
-    const stats = analysisData.statistics || {};
-    const timeSeries = analysisData.time_series || {};
-
-    // Area breakdown data
-    const legalArea = Number(stats.total_legal_area_ha) || 0;
-    const nogoArea = Number(stats.total_nogo_area_ha) || 0;
-    const violatedArea = Number(stats.max_nogo_area_ha) || 0;
-
-    const areaBreakdown = [
-      { name: 'Legal', value: legalArea, color: 'hsl(var(--primary))' },
-      { name: 'No-Go', value: nogoArea, color: 'hsl(var(--status-danger))' },
-      { name: 'Violated', value: violatedArea, color: 'hsl(var(--status-warning))' },
-    ].filter(item => item.value > 0);
-
-    // Temporal data from time series
-    const temporalData = [];
-    if (timeSeries.dates && timeSeries.no_go_excavated_area) {
-      timeSeries.dates.forEach((date: string, i: number) => {
-        temporalData.push({
-          month: new Date(date).toLocaleDateString('en-US', { month: 'short' }),
-          violations: Number(timeSeries.no_go_excavated_area[i]) || 0,
-        });
-      });
-    }
-
-    return { areaBreakdown, temporalData };
-  }, [analysisData]);
-
   useEffect(() => {
     // If analysis data is passed, use it directly
     if (analysisData && analysisData.statistics) {

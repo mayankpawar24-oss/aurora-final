@@ -42,7 +42,7 @@ const HowItWorks = ({ isExpanded = false, onToggle }: HowItWorksProps) => {
         </div>
       </CollapsibleContent>
 
-      {!isOpen && (
+      {!isExpanded && (
         <div className="flex-1 px-4 pb-4 flex items-center justify-around">
           {steps.map((step, i) => (
             <div key={i} className="flex flex-col items-center gap-1.5">

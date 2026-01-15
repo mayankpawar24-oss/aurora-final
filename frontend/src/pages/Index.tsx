@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import Header from "@/components/aurora/Header";
 import ControlPanel from "@/components/aurora/ControlPanel";
 import MapPanel from "@/components/aurora/MapPanel";
@@ -7,6 +7,12 @@ import AlertsTimeline from "@/components/aurora/AlertsTimeline";
 import SystemInsight from "@/components/aurora/SystemInsight";
 import HowItWorks from "@/components/aurora/HowItWorks";
 import { mineAPI, monitoringAPI } from "@/lib/api";
+
+const LoadingPlaceholder = () => (
+  <div className="flex items-center justify-center h-full bg-muted">
+    <p className="text-muted-foreground">Loading...</p>
+  </div>
+);
 
 const Index = () => {
   const [selectedMine, setSelectedMine] = useState("m1");
@@ -18,17 +24,21 @@ const Index = () => {
   const [analysisData, setAnalysisData] = useState<any>(null);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
   const [activeAccordion, setActiveAccordion] = useState<"analysis" | "how_it_works" | null>(null);
+  const [loading, setLoading] = useState(true);
 
+  // Load mines on mount
   useEffect(() => {
     const loadMines = async () => {
       try {
         console.log('Loading mines...');
         const data = await mineAPI.getMines();
         console.log('Mines loaded:', data);
-        setMines(data);
+        setMines(data || []);
+        setLoading(false);
       } catch (error) {
         console.error('Failed to load mines:', error);
         setMines([]);
+        setLoading(false);
       }
     };
     loadMines();
@@ -49,14 +59,23 @@ const Index = () => {
         setAnalysisData(data);
       } catch (error) {
         console.error('Failed to run analysis:', error);
-        // Set empty analysis data to prevent crashes
         setAnalysisData(null);
       }
     };
     
-    // Run analysis on mount and when dependencies change
     runAnalysis();
-  }, [selectedMine, dateRange]);
+  }, [selectedMine, dateRange, refreshTrigger]);
+
+  if (loading) {
+    return (
+      <div className="h-screen flex flex-col bg-background overflow-hidden">
+        <Header />
+        <div className="flex-1 flex items-center justify-center">
+          <LoadingPlaceholder />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="h-screen flex flex-col bg-background overflow-hidden">
@@ -64,21 +83,23 @@ const Index = () => {
       
       <div className="flex-1 flex min-h-0">
         {/* Left Control Panel */}
-        <ControlPanel
-          selectedMine={selectedMine}
-          setSelectedMine={setSelectedMine}
-          dateRange={dateRange}
-          setDateRange={setDateRange}
-          showLegalBoundary={showLegalBoundary}
-          setShowLegalBoundary={setShowLegalBoundary}
-          showNoGoZones={showNoGoZones}
-          setShowNoGoZones={setShowNoGoZones}
-          showExcavation={showExcavation}
-          setShowExcavation={setShowExcavation}
-          mines={mines || []}
-          onAnalysisComplete={setAnalysisData}
-          onMonitoringStart={() => setRefreshTrigger(prev => prev + 1)}
-        />
+        <Suspense fallback={<LoadingPlaceholder />}>
+          <ControlPanel
+            selectedMine={selectedMine}
+            setSelectedMine={setSelectedMine}
+            dateRange={dateRange}
+            setDateRange={setDateRange}
+            showLegalBoundary={showLegalBoundary}
+            setShowLegalBoundary={setShowLegalBoundary}
+            showNoGoZones={showNoGoZones}
+            setShowNoGoZones={setShowNoGoZones}
+            showExcavation={showExcavation}
+            setShowExcavation={setShowExcavation}
+            mines={mines || []}
+            onAnalysisComplete={setAnalysisData}
+            onMonitoringStart={() => setRefreshTrigger(prev => prev + 1)}
+          />
+        </Suspense>
 
         {/* Main Content Area */}
         <div className="flex-1 flex flex-col min-w-0 p-4 gap-4">
@@ -86,43 +107,53 @@ const Index = () => {
           <div className="flex-1 flex gap-4 min-h-0">
             {/* Hero Map Panel */}
             <div className="flex-1 bg-card border border-border rounded-lg overflow-hidden shadow-2xl">
-              <MapPanel 
-                showLegalBoundary={showLegalBoundary}
-                showNoGoZones={showNoGoZones}
-                showExcavation={showExcavation}
-                selectedMine={selectedMine}
-                mines={mines || []}
-                analysisData={analysisData}
-              />
+              <Suspense fallback={<LoadingPlaceholder />}>
+                <MapPanel 
+                  showLegalBoundary={showLegalBoundary}
+                  showNoGoZones={showNoGoZones}
+                  showExcavation={showExcavation}
+                  selectedMine={selectedMine}
+                  mines={mines || []}
+                  analysisData={analysisData}
+                />
+              </Suspense>
             </div>
 
-            {/* Right Side: Alerts + Insight */}
-            <div className="w-80 flex flex-col gap-4">
-              <AlertsTimeline mineId={selectedMine} analysisData={analysisData} />
-              <SystemInsight 
-                mineId={selectedMine} 
-                analysisData={analysisData} 
-                refreshKey={refreshTrigger}
-                isExpanded={activeAccordion === "analysis"}
-                onToggle={() => setActiveAccordion(activeAccordion === "analysis" ? null : "analysis")}
-              />
+            {/* Right Side: Alerts + Detailed Analysis + How It Works */}
+            <div className="w-80 flex flex-col gap-4 overflow-y-auto">
+              <Suspense fallback={<LoadingPlaceholder />}>
+                <AlertsTimeline mineId={selectedMine} analysisData={analysisData} />
+              </Suspense>
+
+              {/* Accordion Stack: Only one expands at a time */}
+              <Suspense fallback={<LoadingPlaceholder />}>
+                <SystemInsight 
+                  mineId={selectedMine} 
+                  analysisData={analysisData} 
+                  refreshKey={refreshTrigger}
+                  isExpanded={activeAccordion === "analysis"}
+                  onToggle={() => setActiveAccordion(activeAccordion === "analysis" ? null : "analysis")}
+                />
+              </Suspense>
+              <Suspense fallback={<LoadingPlaceholder />}>
+                <HowItWorks 
+                  isExpanded={activeAccordion === "how_it_works"}
+                  onToggle={() => setActiveAccordion(activeAccordion === "how_it_works" ? null : "how_it_works")}
+                />
+              </Suspense>
             </div>
           </div>
 
-          {/* Bottom Section: Analytics + How It Works */}
+          {/* Bottom Section: Analytics Only */}
           <div className="h-56 flex gap-4">
             <div className="flex-1 bg-card border border-border rounded-lg overflow-hidden">
-              <AnalyticsChart 
-                selectedMine={selectedMine}
-                dateRange={dateRange}
-                analysisData={analysisData}
-              />
-            </div>
-            <div className="w-80">
-              <HowItWorks 
-                isExpanded={activeAccordion === "how_it_works"}
-                onToggle={() => setActiveAccordion(activeAccordion === "how_it_works" ? null : "how_it_works")}
-              />
+              <Suspense fallback={<LoadingPlaceholder />}>
+                <AnalyticsChart 
+                  selectedMine={selectedMine}
+                  dateRange={dateRange}
+                  analysisData={analysisData}
+                />
+              </Suspense>
             </div>
           </div>
         </div>
