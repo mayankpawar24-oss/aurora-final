@@ -14,14 +14,17 @@ const SystemInsight = ({ mineId = "m1", analysisData, refreshKey = 0 }: SystemIn
 
   useEffect(() => {
     // If analysis data is passed, use it directly
-    if (analysisData) {
-      const stats = analysisData.statistics || {};
+    if (analysisData && analysisData.statistics) {
+      const stats = analysisData.statistics;
       setInsights({
         excavationAreaHa: Number(stats.max_nogo_area_ha) || 0,
         bufferZoneViolations: Number(stats.violation_count) || 0,
         totalLegalArea: Number(stats.total_legal_area_ha) || 0,
         totalNoGoArea: Number(stats.total_nogo_area_ha) || 0,
       });
+      setLoading(false);
+    } else {
+      setInsights(null);
       setLoading(false);
     }
   }, [analysisData, refreshKey]);

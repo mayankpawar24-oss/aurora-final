@@ -17,19 +17,8 @@ const AlertsTimeline = ({ mineId = "m1", analysisData }: AlertsTimelineProps) =>
       setAlerts(analysisData.alerts);
       setLoading(false);
     } else {
-      // Fallback to API call if no analysis data
-      const loadAlerts = async () => {
-        setLoading(true);
-        try {
-          const data = await alertAPI.getAlerts(mineId);
-          setAlerts(data);
-        } catch (error) {
-          console.error('Failed to load alerts:', error);
-        } finally {
-          setLoading(false);
-        }
-      };
-      loadAlerts();
+      setAlerts([]);
+      setLoading(false);
     }
   }, [mineId, analysisData]);
 

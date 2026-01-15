@@ -20,10 +20,10 @@ const MapPanel = ({
 }: MapPanelProps) => {
   // Find the selected mine's coordinates
   const selectedMineData = mines.find(mine => mine.id === selectedMine);
-  const lat = selectedMineData?.lat || 23.8081;
-  const lng = selectedMineData?.lng || 84.8385;
-  const mineName = selectedMineData?.name || "Jharia Coal Fields";
-  const region = selectedMineData?.region || "Jharkhand";
+  const lat = selectedMineData?.lat || 0;
+  const lng = selectedMineData?.lng || 0;
+  const mineName = selectedMineData?.name || "Unknown Mine";
+  const region = selectedMineData?.region || "Unknown Region";
   return (
     <div className="w-full h-full relative bg-aurora-charcoal overflow-hidden">
       {/* Satellite-style terrain background */}
@@ -104,19 +104,6 @@ const MapPanel = ({
             filter="url(#glow)"
           />
         )}
-
-        {/* Fallback static legal boundary if no analysisData */}
-        {showLegalBoundary && !analysisData?.map_layers?.legal_boundary && (
-          <polygon
-            points="20,15 78,18 85,65 75,88 28,85 15,48"
-            fill="none"
-            stroke="hsl(var(--legal-boundary))"
-            strokeWidth="0.4"
-            strokeDasharray="3,1.5"
-            opacity="0.85"
-            filter="url(#glow)"
-          />
-        )}
         
         {/* Dynamic No-go zones from analysisData */}
         {showNoGoZones && analysisData?.map_layers?.no_go_zone && analysisData.map_layers.no_go_zone.features && (
@@ -157,28 +144,6 @@ const MapPanel = ({
               })}
           </>
         )}
-
-        {/* Fallback static no-go zones if no analysisData */}
-        {showNoGoZones && !analysisData?.map_layers?.no_go_zone && (
-          <>
-            <polygon
-              points="52,30 72,35 70,52 50,48"
-              fill="hsl(var(--no-go-zone))"
-              fillOpacity="0.15"
-              stroke="hsl(var(--no-go-zone))"
-              strokeWidth="0.35"
-              opacity="0.9"
-            />
-            <polygon
-              points="25,55 38,52 42,68 30,72"
-              fill="hsl(var(--no-go-zone))"
-              fillOpacity="0.12"
-              stroke="hsl(var(--no-go-zone))"
-              strokeWidth="0.3"
-              opacity="0.8"
-            />
-          </>
-        )}
         
         {/* Dynamic Excavation areas from analysisData */}
         {showExcavation && analysisData?.map_layers?.excavation_mask && analysisData.map_layers.excavation_mask.geometry?.coordinates && (() => {
@@ -211,55 +176,20 @@ const MapPanel = ({
             return null;
           }
         })()}
-
-        {/* Fallback static excavation areas if no analysisData */}
-        {showExcavation && !analysisData?.map_layers?.excavation_mask && (
-          <>
-            <ellipse
-              cx="42"
-              cy="42"
-              rx="12"
-              ry="9"
-              fill="hsl(var(--excavation-area))"
-              fillOpacity="0.25"
-              stroke="hsl(var(--excavation-area))"
-              strokeWidth="0.25"
-            />
-            <ellipse
-              cx="58"
-              cy="68"
-              rx="9"
-              ry="7"
-              fill="hsl(var(--excavation-area))"
-              fillOpacity="0.22"
-              stroke="hsl(var(--excavation-area))"
-              strokeWidth="0.25"
-            />
-            <ellipse
-              cx="35"
-              cy="38"
-              rx="5"
-              ry="4"
-              fill="hsl(var(--excavation-area))"
-              fillOpacity="0.18"
-              stroke="hsl(var(--excavation-area))"
-              strokeWidth="0.2"
-            />
-          </>
-        )}
         
-        {/* Violation markers */}
-        {showNoGoZones && (
-          <>
-            <circle cx="62" cy="42" r="1.5" fill="hsl(var(--status-warning))" opacity="0.9">
-              <animate attributeName="r" values="1.5;2;1.5" dur="2s" repeatCount="indefinite" />
-            </circle>
-            <circle cx="64" cy="44" r="1" fill="hsl(var(--status-warning))" opacity="0.7" />
-            <circle cx="33" cy="62" r="1.2" fill="hsl(var(--status-warning))" opacity="0.8">
-              <animate attributeName="r" values="1.2;1.6;1.2" dur="2.5s" repeatCount="indefinite" />
-            </circle>
-          </>
-        )}
+        {/* Violation markers from analysisData */}
+        {showNoGoZones && analysisData?.violations && analysisData.violations.map((violation: any, index: number) => (
+          <circle 
+            key={index}
+            cx={violation.x} 
+            cy={violation.y} 
+            r="1.5" 
+            fill="hsl(var(--status-warning))" 
+            opacity="0.9"
+          >
+            <animate attributeName="r" values="1.5;2;1.5" dur="2s" repeatCount="indefinite" />
+          </circle>
+        ))}
       </svg>
 
       {/* Map controls */}
@@ -311,7 +241,7 @@ const MapPanel = ({
       {/* Coordinates */}
       <div className="absolute bottom-4 right-4 px-3 py-2 bg-card/95 backdrop-blur-sm rounded-lg border border-border">
         <p className="text-xs font-mono text-foreground">
-          {lat.toFixed(4)}°N, {lng.toFixed(4)}°E
+          {lat !== 0 && lng !== 0 ? `${lat.toFixed(4)}°N, ${lng.toFixed(4)}°E` : 'No coordinates available'}
         </p>
         <p className="text-[10px] text-muted-foreground">{mineName}, {region}</p>
       </div>

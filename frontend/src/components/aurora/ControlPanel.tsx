@@ -13,13 +13,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-const defaultMines = [
-  { id: "m1", name: "Jharia Coal Fields", region: "Jharkhand" },
-  { id: "m2", name: "Singrauli Complex", region: "Madhya Pradesh" },
-  { id: "m3", name: "Talcher Coalfield", region: "Odisha" },
-  { id: "m4", name: "Korba Coalfield", region: "Chhattisgarh" },
-];
-
 interface ControlPanelProps {
   selectedMine: string;
   setSelectedMine: (value: string) => void;
@@ -47,7 +40,7 @@ const ControlPanel = ({
   setShowNoGoZones,
   showExcavation,
   setShowExcavation,
-  mines = defaultMines,
+  mines = [],
   onAnalysisComplete,
   onMonitoringStart,
 }: ControlPanelProps) => {
@@ -74,8 +67,12 @@ const ControlPanel = ({
       const data = await monitoringAPI.startMonitoring(selectedMine, startDateStr, endDateStr);
       onAnalysisComplete?.(data);
       
-      // Update actual range (backend may have expanded it)
-      setActualAnalysisRange(requestedRange);
+      // Update actual range from backend response if provided
+      if (data.actual_start_date && data.actual_end_date) {
+        setActualAnalysisRange({ start: data.actual_start_date, end: data.actual_end_date });
+      } else {
+        setActualAnalysisRange(requestedRange);
+      }
       
       toast({
         title: "Success",
@@ -142,9 +139,9 @@ const ControlPanel = ({
               <span className="text-xs font-mono text-foreground">{formatDate(endDate)}</span>
             </div>
           </div>
-          {actualAnalysisRange && actualAnalysisRange.start === actualAnalysisRange.end && (
+          {actualAnalysisRange && (
             <div className="text-[10px] text-muted-foreground text-center">
-              Range auto-expanded for trend analysis
+              Analysis range: {new Date(actualAnalysisRange.start + '-01').toLocaleDateString('en-US', { month: 'short', year: 'numeric' })} - {new Date(actualAnalysisRange.end + '-01').toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}
             </div>
           )}
         </div>

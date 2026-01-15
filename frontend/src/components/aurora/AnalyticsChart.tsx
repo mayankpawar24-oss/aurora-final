@@ -31,28 +31,18 @@ const AnalyticsChart = ({ selectedMine = "m1", dateRange = [25, 85], analysisDat
           noGoZone: Number(no_go_excavated_area[i]) || 0,
         }));
       } catch (error) {
-        console.warn('Error processing time series data, using fallback:', error);
-        // Fallback to generated data if processing fails
+        console.warn('Error processing time series data:', error);
+        return [];
       }
     }
     
-    // Fallback to generated data if no analysis data or processing failed
-    const months = [
-      "Jan", "Feb", "Mar", "Apr", "May", "Jun",
-      "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
-    ];
-    
-    return months.map((month, i) => ({
-      month,
-      excavated: Math.round(42 + Math.sin(i * 0.4) * 12 + i * 2.8),
-      noGoZone: Math.round((1.5 + Math.sin(i * 0.7) * 1 + (i > 5 ? (i - 5) * 0.6 : 0)) * 10) / 10,
-    }));
+    return [];
   }, [analysisData]);
   
-  const latestExcavated = data[data.length - 1]?.excavated || 0;
-  const firstExcavated = data[0]?.excavated || 0;
-  const trend = latestExcavated > firstExcavated ? "up" : "down";
-  const change = firstExcavated !== 0 ? Math.abs(((latestExcavated - firstExcavated) / firstExcavated) * 100).toFixed(1) : "0.0";
+  const latestExcavated = data.length > 0 ? data[data.length - 1]?.excavated || 0 : 0;
+  const firstExcavated = data.length > 0 ? data[0]?.excavated || 0 : 0;
+  const trend = data.length > 1 && latestExcavated > firstExcavated ? "up" : data.length > 1 ? "down" : "neutral";
+  const change = data.length > 1 && firstExcavated !== 0 ? Math.abs(((latestExcavated - firstExcavated) / firstExcavated) * 100).toFixed(1) : "0.0";
 
   const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
@@ -81,9 +71,9 @@ const AnalyticsChart = ({ selectedMine = "m1", dateRange = [25, 85], analysisDat
         <div className="flex items-center gap-4">
           <h3 className="text-sm font-semibold text-foreground">Excavation Activity Timeline</h3>
           <div className={`flex items-center gap-1 px-2 py-1 rounded-md ${
-            trend === "up" ? "bg-status-warning/10 text-status-warning" : "bg-primary/10 text-primary"
+            trend === "up" ? "bg-status-warning/10 text-status-warning" : trend === "down" ? "bg-primary/10 text-primary" : "bg-muted/10 text-muted-foreground"
           }`}>
-            {trend === "up" ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
+            {trend === "up" ? <TrendingUp className="w-3 h-3" /> : trend === "down" ? <TrendingDown className="w-3 h-3" /> : <span className="w-3 h-3 flex items-center justify-center text-xs">-</span>}
             <span className="text-xs font-medium">{change}%</span>
           </div>
         </div>

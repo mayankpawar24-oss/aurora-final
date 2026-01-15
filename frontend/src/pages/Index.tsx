@@ -27,13 +27,7 @@ const Index = () => {
         setMines(data);
       } catch (error) {
         console.error('Failed to load mines:', error);
-        // Use default mines as fallback
-        setMines([
-          { id: "m1", name: "Jharia Coal Fields", region: "Jharkhand", lat: 23.8081, lng: 84.8385 },
-          { id: "m2", name: "Singrauli Complex", region: "Madhya Pradesh", lat: 24.2002, lng: 82.6915 },
-          { id: "m3", name: "Talcher Coalfield", region: "Odisha", lat: 20.5937, lng: 85.2123 },
-          { id: "m4", name: "Korba Coalfield", region: "Chhattisgarh", lat: 22.3594, lng: 82.6855 },
-        ]);
+        setMines([]);
       }
     };
     loadMines();
