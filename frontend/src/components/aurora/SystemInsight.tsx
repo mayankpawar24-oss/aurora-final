@@ -19,12 +19,45 @@ interface SystemInsightProps {
   mineId?: string;
   analysisData?: any;
   refreshKey?: number;
+  isExpanded?: boolean;
+  onToggle?: () => void;
 }
 
-const SystemInsight = ({ mineId = "m1", analysisData, refreshKey = 0 }: SystemInsightProps) => {
+const SystemInsight = ({ mineId = "m1", analysisData, refreshKey = 0, isExpanded = false, onToggle }: SystemInsightProps) => {
   const [insights, setInsights] = useState<any>(null);
   const [loading, setLoading] = useState(false);
-  const [showDetailed, setShowDetailed] = useState(false);
+
+  // Calculate chart data
+  const chartData = useMemo(() => {
+    if (!analysisData) return { areaBreakdown: [], temporalData: [] };
+
+    const stats = analysisData.statistics || {};
+    const timeSeries = analysisData.time_series || {};
+
+    // Area breakdown data
+    const legalArea = Number(stats.total_legal_area_ha) || 0;
+    const nogoArea = Number(stats.total_nogo_area_ha) || 0;
+    const violatedArea = Number(stats.max_nogo_area_ha) || 0;
+
+    const areaBreakdown = [
+      { name: 'Legal', value: legalArea, color: 'hsl(var(--primary))' },
+      { name: 'No-Go', value: nogoArea, color: 'hsl(var(--status-danger))' },
+      { name: 'Violated', value: violatedArea, color: 'hsl(var(--status-warning))' },
+    ].filter(item => item.value > 0);
+
+    // Temporal data from time series
+    const temporalData = [];
+    if (timeSeries.dates && timeSeries.no_go_excavated_area) {
+      timeSeries.dates.forEach((date: string, i: number) => {
+        temporalData.push({
+          month: new Date(date).toLocaleDateString('en-US', { month: 'short' }),
+          violations: Number(timeSeries.no_go_excavated_area[i]) || 0,
+        });
+      });
+    }
+
+    return { areaBreakdown, temporalData };
+  }, [analysisData]);
 
   // Calculate chart data
   const chartData = useMemo(() => {
@@ -113,12 +146,12 @@ const SystemInsight = ({ mineId = "m1", analysisData, refreshKey = 0 }: SystemIn
         </div>
       </div>
       
-      <div className="flex items-center gap-2 text-xs text-primary cursor-pointer hover:text-primary/80" onClick={() => setShowDetailed(!showDetailed)}>
+      <div className="flex items-center gap-2 text-xs text-primary cursor-pointer hover:text-primary/80" onClick={onToggle}>
         <span className="font-medium">View detailed analysis</span>
-        {showDetailed ? <ChevronUp className="w-3 h-3" /> : <ArrowRight className="w-3 h-3" />}
+        {isExpanded ? <ChevronUp className="w-3 h-3" /> : <ArrowRight className="w-3 h-3" />}
       </div>
       
-      {showDetailed && (
+      {isExpanded && (
         <div className="mt-4 p-3 bg-muted/30 rounded-lg border border-border">
           <h4 className="text-sm font-semibold text-foreground mb-3">Detailed Analysis</h4>
           

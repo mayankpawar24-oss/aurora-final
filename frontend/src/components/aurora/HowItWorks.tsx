@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { ChevronDown, Satellite, Layers, BarChart3, Bell } from "lucide-react";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 
@@ -9,18 +8,22 @@ const steps = [
   { icon: Bell, label: "Alert", desc: "Violation reports" },
 ];
 
-const HowItWorks = () => {
-  const [isOpen, setIsOpen] = useState(false);
+interface HowItWorksProps {
+  isExpanded?: boolean;
+  onToggle?: () => void;
+}
+
+const HowItWorks = ({ isExpanded = false, onToggle }: HowItWorksProps) => {
 
   return (
     <Collapsible 
-      open={isOpen} 
-      onOpenChange={setIsOpen}
+      open={isExpanded} 
+      onOpenChange={onToggle}
       className="h-full bg-card border border-border rounded-lg overflow-hidden flex flex-col"
     >
       <CollapsibleTrigger className="w-full px-4 py-3 flex items-center justify-between hover:bg-muted/30 transition-colors">
         <h3 className="text-xs font-semibold text-foreground uppercase tracking-wider">How It Works</h3>
-        <ChevronDown className={`w-4 h-4 text-muted-foreground transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+        <ChevronDown className={`w-4 h-4 text-muted-foreground transition-transform ${isExpanded ? 'rotate-180' : ''}`} />
       </CollapsibleTrigger>
       
       <CollapsibleContent className="flex-1 overflow-hidden">

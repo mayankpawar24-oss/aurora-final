@@ -17,6 +17,7 @@ const Index = () => {
   const [mines, setMines] = useState<any[]>([]);
   const [analysisData, setAnalysisData] = useState<any>(null);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
+  const [activeAccordion, setActiveAccordion] = useState<"analysis" | "how_it_works" | null>(null);
 
   useEffect(() => {
     const loadMines = async () => {
@@ -98,7 +99,13 @@ const Index = () => {
             {/* Right Side: Alerts + Insight */}
             <div className="w-80 flex flex-col gap-4">
               <AlertsTimeline mineId={selectedMine} analysisData={analysisData} />
-              <SystemInsight mineId={selectedMine} analysisData={analysisData} refreshKey={refreshTrigger} />
+              <SystemInsight 
+                mineId={selectedMine} 
+                analysisData={analysisData} 
+                refreshKey={refreshTrigger}
+                isExpanded={activeAccordion === "analysis"}
+                onToggle={() => setActiveAccordion(activeAccordion === "analysis" ? null : "analysis")}
+              />
             </div>
           </div>
 
@@ -112,7 +119,10 @@ const Index = () => {
               />
             </div>
             <div className="w-80">
-              <HowItWorks />
+              <HowItWorks 
+                isExpanded={activeAccordion === "how_it_works"}
+                onToggle={() => setActiveAccordion(activeAccordion === "how_it_works" ? null : "how_it_works")}
+              />
             </div>
           </div>
         </div>
