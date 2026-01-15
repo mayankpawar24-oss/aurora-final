@@ -1,10 +1,10 @@
-AURORA 2.0 – Adaptive Mining Activity Monitoring
+🌌 AURORA 2.0 – Adaptive Mining Activity Monitoring
 
 Beyond the Horizon
 
 An end-to-end geospatial analytics system for adaptive monitoring of mining activities using Sentinel-2 time-series data, designed to detect excavation trends and no-go zone violations with temporal consistency and explainability.
 
- Overview
+Overview
 
 Regulatory agencies require continuous, reliable monitoring of mining operations to ensure compliance with legal boundaries and protection of restricted zones.
 
@@ -20,7 +20,7 @@ Interactive visual analytics dashboard
 
 The system is data-adaptive, mine-agnostic, and designed for real-world deployment scenarios.
 
-Key Capabilities
+🧠 Key Capabilities
 
 Adaptive Signature Learning
 Learns excavation patterns dynamically from multispectral time-series data without hard-coded thresholds.
@@ -36,20 +36,18 @@ Visualizes spatial changes, timelines, and system insights through an intuitive 
 
 🏗️ System Architecture
 Frontend (React + Vite)
-│
-│── Interactive Dashboard
-│   ├── Map Visualization
-│   ├── Temporal Charts
-│   ├── System Insights
-│
-Backend (FastAPI)
-│
-│── Adaptive Monitoring API
-│   ├── Excavation Analytics
-│   ├── Temporal Aggregation
-│   └── Violation Detection Logic
+ └─ Interactive Dashboard
+    ├─ Map Visualization
+    ├─ Temporal Charts
+    └─ System Insights
 
- Tech Stack
+Backend (FastAPI)
+ └─ Adaptive Monitoring API
+    ├─ Excavation Analytics
+    ├─ Temporal Aggregation
+    └─ Violation Detection Logic
+
+🛠️ Tech Stack
 Frontend
 
 React + TypeScript
@@ -73,17 +71,19 @@ Uvicorn
 git clone https://github.com/mayankpawar24-oss/aurora-insights.git
 cd aurora-insights
 
-2️⃣ Run the Backend
+2️⃣ Start the Backend (FastAPI)
 cd backend
 pip install fastapi uvicorn
 uvicorn main:app --reload --port 8000
 
 
-Backend will be available at:
-👉 http://127.0.0.1:8000
-👉 API Docs: http://127.0.0.1:8000/docs
+🔹 Backend URL:
+http://127.0.0.1:8000
 
-3️⃣ Run the Frontend
+🔹 API Documentation:
+http://127.0.0.1:8000/docs
+
+3️⃣ Start the Frontend (React Dashboard)
 
 Open a new terminal window:
 
@@ -92,16 +92,16 @@ npm install
 npm run dev
 
 
-Frontend will be available at:
-👉 http://localhost:5173
+🔹 Frontend URL:
+http://localhost:5173
 
 📊 Dashboard Walkthrough
 
-Select Mine & Date Range
+Select Mine and Date Range
 
-Start Monitoring
+Click Start Monitoring
 
-View:
+Analyze:
 
 Excavated area trends
 
@@ -111,16 +111,10 @@ Temporal excavation growth
 
 Expand Detailed Analysis for supporting charts and breakdowns
 
-
-
-
-
-
-
 📌 Notes for Evaluators
 
-The system demonstrates end-to-end integration (data → analytics → visualization).
+Demonstrates end-to-end integration (analytics → backend → visualization)
 
-Analytics are structured to be mine-agnostic and deployment-ready.
+Designed to be mine-agnostic and scalable
 
-The dashboard emphasizes clarity, trust, and interpretability.
+Emphasizes clarity, trust, and interpretability in decision-making
