@@ -1,4 +1,4 @@
-<img width="775" height="413" alt="image" src="https://github.com/user-attachments/assets/c5ce2afd-d114-4e87-9060-400bc933a85f" />🌌 AURORA 2.0 – Adaptive Mining Activity Monitoring
+🌌 AURORA 2.0 – Adaptive Mining Activity Monitoring
 
 Beyond the Horizon
 
@@ -35,17 +35,8 @@ Interactive Dashboard
 Visualizes spatial changes, timelines, and system insights through an intuitive interface.
 
 🏗️ System Architecture
-Frontend (React + Vite)
- └─ Interactive Dashboard
-    ├─ Map Visualization
-    ├─ Temporal Charts
-    └─ System Insights
+<img width="775" height="413" alt="image" src="https://github.com/user-attachments/assets/944f76a6-ad23-4ef2-9f5f-bfb91160c47d" />
 
-Backend (FastAPI)
- └─ Adaptive Monitoring API
-    ├─ Excavation Analytics
-    ├─ Temporal Aggregation
-    └─ Violation Detection Logic
 
 🛠️ Tech Stack
 Frontend
