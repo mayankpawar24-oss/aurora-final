@@ -35,6 +35,9 @@ Interactive Dashboard
 Visualizes spatial changes, timelines, and system insights through an intuitive interface.
 
 🏗️ System Architecture
+
+
+
 <img width="775" height="413" alt="image" src="https://github.com/user-attachments/assets/944f76a6-ad23-4ef2-9f5f-bfb91160c47d" />
 
 
