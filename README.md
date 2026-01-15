@@ -67,10 +67,17 @@ Uvicorn
 git clone https://github.com/mayankpawar24-oss/aurora-insights.git
 cd aurora-insights
 
+<img width="842" height="114" alt="image" src="https://github.com/user-attachments/assets/0ee3f228-7d5c-4e85-a96e-f9b2f56898a2" />
+
+
 2️⃣ Start the Backend (FastAPI)
 cd backend
 pip install fastapi uvicorn
 uvicorn main:app --reload --port 8000
+
+
+<img width="822" height="172" alt="image" src="https://github.com/user-attachments/assets/e0f9a739-c350-4c27-bebd-bb4d442083a9" />
+
 
 
 🔹 Backend URL:
