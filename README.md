@@ -58,6 +58,8 @@ FastAPI
 Uvicorn
 
 ▶️ How to Run the Project Locally
+
+
 1️⃣ Clone the Repository
 git clone https://github.com/mayankpawar24-oss/aurora-insights.git
 cd aurora-insights
@@ -73,6 +75,8 @@ http://127.0.0.1:8000
 
 🔹 API Documentation:
 http://127.0.0.1:8000/docs
+
+
 
 3️⃣ Start the Frontend (React Dashboard)
 
