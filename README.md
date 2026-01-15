@@ -100,22 +100,40 @@ npm run dev
 🔹 Frontend URL:
 http://localhost:5173
 
-📊 Dashboard Walkthrough
+How to Use the Dashboard (UI Guide)
+1️⃣ Select Mine & Date Range
 
-Select Mine and Date Range
+Choose a mining site from the dropdown
 
-Click Start Monitoring
+Select the analysis time window
 
-Analyze:
+2️⃣ Start Monitoring
 
-Excavated area trends
+Click “Start Monitoring”
 
-No-go zone violations
+The system fetches analytics from the backend
 
-Temporal excavation growth
+3️⃣ Analyze Outputs
 
-Expand Detailed Analysis for supporting charts and breakdowns
+The dashboard displays:
 
+Map View – legal boundary, no-go zones, and detected excavation areas
+
+System Insights – total excavated area, violation area, and counts
+
+Excavation Timeline – temporal progression of mining activity
+
+4️⃣ View Detailed Analysis
+
+Expand “Detailed Analysis” to see:
+
+Violation area breakdown
+
+Temporal growth trends supporting the summary metrics
+
+5️⃣ Understand the Workflow
+
+Expand “How It Works” to view the step-by-step monitoring pipeline
 📌 Notes for Evaluators
 
 Demonstrates end-to-end integration (analytics → backend → visualization)
